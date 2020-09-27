@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@TeleOp(name = "Ring Detector - OpenCV", group="OpenCV")
+@TeleOp(name = "Concept: OpenCV Object Detection", group = "Concept")
 public class rvFindRingsOpenCV001 extends LinearOpMode {
 
     // https://www.youtube.com/watch?v=-QFoOCoaW7I
