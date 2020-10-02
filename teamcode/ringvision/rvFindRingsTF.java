@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.internal.android.dx.dex.code.SwitchData;
 
 import java.util.List;
 
@@ -73,11 +74,47 @@ public class rvFindRingsTF extends LinearOpMode {
                         // step through the list of recognitions and display boundary info.
                         int i = 0;
                         for (Recognition recognition : updatedRecognitions) {
+
+                            float right = recognition.getBottom();
+                            float left = recognition.getTop();
+                            float top = recognition.getRight();
+                            float bottom = recognition.getLeft();
+
+                            float height = Math.abs( top - bottom);
+                            float width = Math.abs(right - left);
+                            float area = Math.abs(height * width);
+                            float xCenter = (right + left) / 2;
+                            float yCenter = (top + bottom) / 2;
+
+                            // 1280 x 720 = 720p Resolution
+                            // 640 (x) x 360 (y) = center
+                            String horizontal = (xCenter < 620  ? "Left" : (xCenter > 660 ? "Right" : "Good"));
+                            String vertical = (yCenter < 350  ? "Down" : (yCenter > 370 ? "Up" : "Good"));
+
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
+                            telemetry.addData(String.format("  top, left (%d)", i), "%.03f , %.03f",
+                                    top, left);
+                            telemetry.addData(String.format("  bottom, right (%d)", i), "%.03f , %.03f",
+                                    bottom , right);
+                            telemetry.addData(String.format("  height, width (%d)", i), "%.03f , %.03f",
+                                    height, width);
+                            telemetry.addData(String.format("  area (%d)", i), "%.03f ",area);
+                            telemetry.addData(String.format("  xC, yC (%d)", i), "%.03f , %.03f",
+                                    xCenter, yCenter);
+                            telemetry.addData(String.format("  horizon, vert (%d)", i), "%s, %s", horizontal, vertical);
+
+
+                            if (area <= 24000){
+                                telemetry.addData("Distance", "14 inches");
+                            } else if (area <= 42000){
+                                telemetry.addData("Distance", "12 inches");
+                            } else if (area <= 59000){
+                                telemetry.addData("Distance", "10 inches");
+                            } else if (area <= 99000){
+                                telemetry.addData("Distance", "8 inches");
+                            } else if (area <= 105000){
+                                telemetry.addData("Distance", "6 inches");
+                            }
                         }
                         telemetry.update();
                     }
@@ -101,6 +138,7 @@ public class rvFindRingsTF extends LinearOpMode {
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
